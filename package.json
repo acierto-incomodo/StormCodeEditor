@@ -1,0 +1,19 @@
+{
+  "name": "electron-code-editor",
+  "version": "0.1.0",
+  "description": "A minimal Electron-based code editor built with Monaco",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "start:dev": "npx electron ."
+  },
+  "devDependencies": {
+    "electron": "^45.3.3",
+    "electron-builder": "^26.18.0",
+    "electron-rebuild": "^3.2.9"
+  },
+  "dependencies": {
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.11"
+  }
+}
