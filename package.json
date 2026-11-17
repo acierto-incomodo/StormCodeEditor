@@ -1,13 +1,18 @@
 {
   "name": "electron-code-editor",
   "version": "1.0.0",
+  "author": "StormGamesStudios <meliodas.aitor@gmail.com>",
   "description": "A minimal Electron-based code editor built with Monaco",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "start:dev": "npx electron .",
     "build": "electron-builder --win nsis",
-    "release:win": "electron-builder --win nsis --publish always"
+    "release:win": "electron-builder --win nsis --publish always",
+    "dist": "electron-builder --win nsis appx --linux deb AppImage",
+    "dist:clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "dist:win": "electron-builder --win nsis appx",
+    "dist:linux": "electron-builder --linux deb AppImage"
   },
   "devDependencies": {
     "electron": "^45.3.3",
@@ -30,7 +35,22 @@
       "!README.md"
     ],
     "win": {
-      "target": "nsis"
+      "target": [
+        "nsis",
+        "appx"
+      ]
+    },
+    "appx": {
+      "applicationId": "StormCodeEditor",
+      "identityName": "StormGamesStudios.StormCodeEditor",
+      "publisherDisplayName": "StormGamesStudios"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "AppImage"
+      ],
+      "category": "Development"
     },
     "nsis": {
       "oneClick": true,
