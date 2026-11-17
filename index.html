@@ -31,6 +31,29 @@
       <button id="saveBtn">Save</button>
       <button id="saveAsBtn">Save As</button>
       <span id="filePath" class="muted">(untitled)</span>
+      <button id="update-preview-button" type="button" aria-pressed="false">
+        Vista previa actualización
+      </button>
+      <div id="update-indicator" class="update-indicator hidden">
+        <div
+          id="update-status-icon"
+          class="update-status-icon"
+          role="img"
+          tabindex="0"
+          aria-label="Estado de la actualización"
+          aria-describedby="update-tooltip"
+        >
+          <span class="update-progress-ring" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 16V4m0 0L7 9m5-5 5 5M5 15v4h14v-4" />
+            </svg>
+          </span>
+        </div>
+        <div id="update-tooltip" class="update-tooltip" role="status">
+          <strong id="update-title"></strong>
+          <span id="update-details"></span>
+        </div>
+      </div>
     </div>
 
     <div id="layout">

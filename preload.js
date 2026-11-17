@@ -9,6 +9,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   readFile: (filePath) => ipcRenderer.invoke("file:read", filePath),
   writeFile: (args) => ipcRenderer.invoke("file:write", args),
   readDir: (dirPath) => ipcRenderer.invoke("dir:read", dirPath),
+  getUpdateStatus: () => ipcRenderer.invoke("updates:get-status"),
+  onUpdateStatus: (callback) => {
+    const listener = (event, status) => callback(status);
+    ipcRenderer.on("updates:status", listener);
+    return () => ipcRenderer.removeListener("updates:status", listener);
+  },
 
   // Receive IPC from main
 });

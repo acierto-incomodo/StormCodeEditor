@@ -37,6 +37,93 @@ body {
   margin-left: 8px;
 }
 
+.update-indicator {
+  position: relative;
+  margin-left: auto;
+  z-index: 2000;
+}
+
+.update-status-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 3px;
+  place-items: center;
+  cursor: default;
+}
+
+.update-progress-ring {
+  position: relative;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(#4caf50 var(--download-progress, 0%), #3a3d41 0);
+}
+
+.update-progress-ring::before {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1e1e1e;
+  content: "";
+}
+
+.update-progress-ring svg {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: #ddd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.update-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  display: none;
+  width: 250px;
+  padding: 10px 12px;
+  border: 1px solid #454545;
+  border-radius: 6px;
+  background: #252526;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  color: #ddd;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+.update-tooltip strong,
+.update-tooltip span {
+  display: block;
+}
+
+.update-tooltip span {
+  margin-top: 3px;
+  color: #bdbdbd;
+  overflow-wrap: anywhere;
+}
+
+.update-indicator:hover .update-tooltip,
+.update-indicator:focus-within .update-tooltip,
+.update-indicator.preview-active .update-tooltip {
+  display: block;
+}
+
+.update-indicator[data-state="error"] .update-progress-ring {
+  background: conic-gradient(#e57373 var(--download-progress, 0%), #3a3d41 0);
+}
+
+.update-indicator[data-state="downloaded"] .update-progress-ring {
+  background: conic-gradient(#4caf50 100%, #3a3d41 0);
+}
+
 /* ---------- MAIN LAYOUT ---------- */
 /* top-level layout: content + bottom terminal (VS Code style) */
 #layout {

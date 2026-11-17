@@ -20,6 +20,14 @@ const ptyAvailable = !!pty;
 console.log("MAIN PROCESS STARTED");
 
 let mainWindow = null;
+let updateStatus = { state: "idle" };
+
+function publishUpdateStatus(status) {
+  updateStatus = status;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send("updates:status", updateStatus);
+  }
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -37,14 +45,52 @@ function createWindow() {
   mainWindow.loadFile("index.html");
 }
 
+ipcMain.handle("updates:get-status", () => updateStatus);
+
 app.whenReady().then(() => {
   createWindow();
 
   if (app.isPackaged) {
     autoUpdater.logger = log;
     autoUpdater.allowDowngrade = true;
+    autoUpdater.on("checking-for-update", () => {
+      publishUpdateStatus({ state: "checking" });
+    });
+    autoUpdater.on("update-available", (info) => {
+      publishUpdateStatus({
+        state: "downloading",
+        version: info.version,
+        percent: 0,
+      });
+    });
+    autoUpdater.on("update-not-available", () => {
+      publishUpdateStatus({ state: "idle" });
+    });
+    autoUpdater.on("download-progress", (progress) => {
+      publishUpdateStatus({
+        state: "downloading",
+        version: updateStatus.version,
+        percent: progress.percent,
+        transferred: progress.transferred,
+        total: progress.total,
+        bytesPerSecond: progress.bytesPerSecond,
+      });
+    });
+    autoUpdater.on("update-downloaded", (info) => {
+      publishUpdateStatus({
+        state: "downloaded",
+        version: info.version,
+        percent: 100,
+      });
+    });
     autoUpdater.on("error", (error) => {
       log.error("Error al buscar o instalar actualizaciones:", error);
+      publishUpdateStatus({
+        state: "error",
+        version: updateStatus.version,
+        percent: updateStatus.percent || 0,
+        message: error.message,
+      });
     });
     autoUpdater.checkForUpdatesAndNotify().catch((error) => {
       log.error("No se pudo comprobar si hay actualizaciones:", error);

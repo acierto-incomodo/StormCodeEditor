@@ -171,6 +171,95 @@ function requireName(fp) {
   return fp.split(/[\\/]/).pop();
 }
 
+function formatUpdateBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes < 0) return "";
+  const units = ["B", "KB", "MB", "GB"];
+  let value = bytes;
+  let unitIndex = 0;
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+  return `${value.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}
+
+function initializeUpdateIndicator() {
+  const indicator = document.getElementById("update-indicator");
+  const icon = document.getElementById("update-status-icon");
+  const ring = indicator && indicator.querySelector(".update-progress-ring");
+  const title = document.getElementById("update-title");
+  const details = document.getElementById("update-details");
+  const previewButton = document.getElementById("update-preview-button");
+  if (!indicator || !icon || !ring || !title || !details || !previewButton) return;
+
+  let actualStatus = { state: "idle" };
+  let previewActive = false;
+
+  function renderUpdateStatus(status) {
+    if (!status || status.state === "idle" || status.state === "checking") {
+      indicator.classList.add("hidden");
+      return;
+    }
+
+    indicator.classList.remove("hidden");
+    indicator.dataset.state = status.state;
+    const percent = Number.isFinite(status.percent)
+      ? Math.max(0, Math.min(100, status.percent))
+      : 0;
+    ring.style.setProperty("--download-progress", `${percent}%`);
+
+    if (status.state === "downloaded") {
+      title.textContent = "Actualización lista";
+      details.textContent = `Versión ${status.version}. Se instalará al cerrar la aplicación.`;
+    } else if (status.state === "error") {
+      title.textContent = "Error de actualización";
+      details.textContent = status.message || "No se pudo completar la actualización.";
+    } else {
+      title.textContent = "Descargando actualización";
+      const transferred = formatUpdateBytes(status.transferred);
+      const total = formatUpdateBytes(status.total);
+      const speed = formatUpdateBytes(status.bytesPerSecond);
+      const transferInfo = transferred && total ? ` · ${transferred} de ${total}` : "";
+      const speedInfo = speed ? ` · ${speed}/s` : "";
+      details.textContent =
+        `Versión ${status.version || ""} · ${percent.toFixed(1)}%${transferInfo}${speedInfo}`;
+    }
+    icon.setAttribute("aria-label", `${title.textContent}. ${details.textContent}`);
+  }
+
+  function handleUpdateStatus(status) {
+    actualStatus = status || { state: "idle" };
+    if (!previewActive) renderUpdateStatus(actualStatus);
+  }
+
+  previewButton.addEventListener("click", () => {
+    previewActive = !previewActive;
+    previewButton.setAttribute("aria-pressed", String(previewActive));
+    previewButton.textContent = previewActive
+      ? "Cerrar vista previa"
+      : "Vista previa actualización";
+    indicator.classList.toggle("preview-active", previewActive);
+
+    renderUpdateStatus(
+      previewActive
+        ? {
+            state: "downloading",
+            version: "1.2.0",
+            percent: 68,
+            transferred: 6815744,
+            total: 10000000,
+            bytesPerSecond: 512000,
+          }
+        : actualStatus
+    );
+  });
+
+  window.electronAPI.onUpdateStatus(handleUpdateStatus);
+  window.electronAPI.getUpdateStatus().then(handleUpdateStatus).catch((error) => {
+    console.error("No se pudo obtener el estado de la actualización:", error);
+  });
+}
+
 require.config({ paths: { vs: "https://unpkg.com/monaco-editor@0.34.1/min/vs" } });
 require(["vs/editor/editor.main"], function () {
   editor = monaco.editor.create(document.getElementById("editor"), {
@@ -205,6 +294,8 @@ async function openFilePath(filePath) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  initializeUpdateIndicator();
+
   document.getElementById("newBtn").addEventListener("click", () => {
     createTab({ name: "untitled", content: "" });
   });
