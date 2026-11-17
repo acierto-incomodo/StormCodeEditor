@@ -215,12 +215,12 @@ ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } 
     term.on("data", (data) => {
       try {
         event.sender.send("terminal:data", { id, data });
-      } catch (e) {}
+      } catch (e) { }
     });
     term.on("exit", (exitCode, signal) => {
       try {
         event.sender.send("terminal:exit", { id, exitCode, signal });
-      } catch (e) {}
+      } catch (e) { }
       terminals.delete(id);
     });
     return { ok: true, id, pty: true };
@@ -239,7 +239,7 @@ ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } 
       write: (d) => {
         try {
           child.stdin.write(d);
-        } catch (e) {}
+        } catch (e) { }
       },
       resize: (c, r) => {
         /* noop - no PTY */
@@ -247,7 +247,7 @@ ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } 
       kill: () => {
         try {
           child.kill();
-        } catch (e) {}
+        } catch (e) { }
       },
     };
     terminals.set(id, wrapper);
@@ -255,17 +255,17 @@ ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } 
     child.stdout.on("data", (chunk) => {
       try {
         event.sender.send("terminal:data", { id, data: String(chunk) });
-      } catch (e) {}
+      } catch (e) { }
     });
     child.stderr.on("data", (chunk) => {
       try {
         event.sender.send("terminal:data", { id, data: String(chunk) });
-      } catch (e) {}
+      } catch (e) { }
     });
     child.on("close", (code) => {
       try {
         event.sender.send("terminal:exit", { id, exitCode: code });
-      } catch (e) {}
+      } catch (e) { }
       terminals.delete(id);
     });
 
@@ -294,7 +294,7 @@ ipcMain.handle("terminal:kill", (event, id) => {
   if (!t) return { ok: false, error: "no such terminal" };
   try {
     t.kill();
-  } catch (e) {}
+  } catch (e) { }
   terminals.delete(id);
   return { ok: true };
 });

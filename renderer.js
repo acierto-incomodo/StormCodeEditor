@@ -638,11 +638,11 @@ async function createTerminal(killExisting = false) {
   if (killExisting && terminalId) {
     try {
       await window.terminalAPI.kill(terminalId);
-    } catch (e) {}
+    } catch (e) { }
     if (term) {
       try {
         term.dispose();
-      } catch (e) {}
+      } catch (e) { }
     }
     term = null;
     terminalId = null;
@@ -717,7 +717,7 @@ async function createTerminal(killExisting = false) {
         fitAddon.fit();
         if (terminalId) window.terminalAPI.resize(terminalId, term.cols, term.rows);
       }
-    } catch (e) {}
+    } catch (e) { }
   }, 120);
 
   window.addEventListener("resize", () => {
@@ -728,7 +728,7 @@ async function createTerminal(killExisting = false) {
           fitAddon.fit();
           window.terminalAPI.resize(terminalId, term.cols, term.rows);
         }
-      } catch (e) {}
+      } catch (e) { }
     }, 150);
   });
 }
