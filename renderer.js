@@ -190,10 +190,14 @@ function initializeUpdateIndicator() {
   const title = document.getElementById("update-title");
   const details = document.getElementById("update-details");
   const previewButton = document.getElementById("update-preview-button");
-  if (!indicator || !icon || !ring || !title || !details || !previewButton) return;
+  const restartButton = document.getElementById("update-restart-button");
+  if (!indicator || !icon || !ring || !title || !details || !previewButton || !restartButton) return;
 
   let actualStatus = { state: "idle" };
   let previewActive = false;
+  let previewFrame = null;
+  const previewDuration = 5000;
+  const previewTotalBytes = 10 * 1024 * 1024;
 
   function renderUpdateStatus(status) {
     if (!status || status.state === "idle" || status.state === "checking") {
@@ -207,22 +211,25 @@ function initializeUpdateIndicator() {
       ? Math.max(0, Math.min(100, status.percent))
       : 0;
     ring.style.setProperty("--download-progress", `${percent}%`);
+    const isDownloaded = status.state === "downloaded";
+    ring.classList.toggle("hidden", isDownloaded);
+    restartButton.classList.toggle("hidden", !isDownloaded);
 
-    if (status.state === "downloaded") {
-      title.textContent = "Actualización lista";
-      details.textContent = `Versión ${status.version}. Se instalará al cerrar la aplicación.`;
+    if (isDownloaded) {
+      title.textContent = "Update ready";
+      details.textContent = `Version ${status.version}. Restart to install the update.`;
     } else if (status.state === "error") {
-      title.textContent = "Error de actualización";
-      details.textContent = status.message || "No se pudo completar la actualización.";
+      title.textContent = "Update error";
+      details.textContent = status.message || "Could not complete the update.";
     } else {
-      title.textContent = "Descargando actualización";
+      title.textContent = "Downloading update";
       const transferred = formatUpdateBytes(status.transferred);
       const total = formatUpdateBytes(status.total);
       const speed = formatUpdateBytes(status.bytesPerSecond);
-      const transferInfo = transferred && total ? ` · ${transferred} de ${total}` : "";
+      const transferInfo = transferred && total ? ` · ${transferred} of ${total}` : "";
       const speedInfo = speed ? ` · ${speed}/s` : "";
       details.textContent =
-        `Versión ${status.version || ""} · ${percent.toFixed(1)}%${transferInfo}${speedInfo}`;
+        `Version ${status.version || ""} · ${percent.toFixed(1)}%${transferInfo}${speedInfo}`;
     }
     icon.setAttribute("aria-label", `${title.textContent}. ${details.textContent}`);
   }
@@ -232,31 +239,79 @@ function initializeUpdateIndicator() {
     if (!previewActive) renderUpdateStatus(actualStatus);
   }
 
-  previewButton.addEventListener("click", () => {
-    previewActive = !previewActive;
-    previewButton.setAttribute("aria-pressed", String(previewActive));
-    previewButton.textContent = previewActive
-      ? "Cerrar vista previa"
-      : "Vista previa actualización";
-    indicator.classList.toggle("preview-active", previewActive);
+  function closePreview() {
+    previewActive = false;
+    if (previewFrame !== null) {
+      cancelAnimationFrame(previewFrame);
+      previewFrame = null;
+    }
+    previewButton.setAttribute("aria-pressed", "false");
+    previewButton.textContent = "Preview update";
+    indicator.classList.remove("preview-active");
+    renderUpdateStatus(actualStatus);
+  }
 
-    renderUpdateStatus(
-      previewActive
-        ? {
-            state: "downloading",
-            version: "1.2.0",
-            percent: 68,
-            transferred: 6815744,
-            total: 10000000,
-            bytesPerSecond: 512000,
-          }
-        : actualStatus
-    );
+  previewButton.addEventListener("click", () => {
+    if (previewActive) {
+      closePreview();
+      return;
+    }
+
+    previewActive = true;
+    previewButton.setAttribute("aria-pressed", "true");
+    previewButton.textContent = "Close preview";
+    indicator.classList.add("preview-active");
+    const startedAt = performance.now();
+
+    function animatePreview(timestamp) {
+      if (!previewActive) return;
+      const progress = Math.min((timestamp - startedAt) / previewDuration, 1);
+      const transferred = Math.round(previewTotalBytes * progress);
+      renderUpdateStatus({
+        state: progress === 1 ? "downloaded" : "downloading",
+        version: "1.2.0",
+        percent: progress * 100,
+        transferred,
+        total: previewTotalBytes,
+        bytesPerSecond: previewTotalBytes / (previewDuration / 1000),
+      });
+
+      if (progress < 1) {
+        previewFrame = requestAnimationFrame(animatePreview);
+      } else {
+        previewFrame = null;
+      }
+    }
+
+    previewFrame = requestAnimationFrame(animatePreview);
+  });
+
+  restartButton.addEventListener("click", async () => {
+    if (previewActive) {
+      closePreview();
+      return;
+    }
+
+    try {
+      const result = await window.electronAPI.installUpdate();
+      if (!result.ok) {
+        actualStatus = { ...actualStatus, state: "error", message: result.error };
+        renderUpdateStatus(actualStatus);
+      }
+    } catch (error) {
+      console.error("Could not restart to install the update:", error);
+      actualStatus = {
+        ...actualStatus,
+        state: "error",
+        message: error.message || "Could not restart to install the update.",
+      };
+      renderUpdateStatus(actualStatus);
+    }
   });
 
   window.electronAPI.onUpdateStatus(handleUpdateStatus);
   window.electronAPI.getUpdateStatus().then(handleUpdateStatus).catch((error) => {
-    console.error("No se pudo obtener el estado de la actualización:", error);
+    console.error("Could not get the update status:", error);
   });
 }
 

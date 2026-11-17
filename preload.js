@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   writeFile: (args) => ipcRenderer.invoke("file:write", args),
   readDir: (dirPath) => ipcRenderer.invoke("dir:read", dirPath),
   getUpdateStatus: () => ipcRenderer.invoke("updates:get-status"),
+  installUpdate: () => ipcRenderer.invoke("updates:install"),
   onUpdateStatus: (callback) => {
     const listener = (event, status) => callback(status);
     ipcRenderer.on("updates:status", listener);

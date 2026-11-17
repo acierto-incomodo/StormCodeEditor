@@ -46,6 +46,13 @@ function createWindow() {
 }
 
 ipcMain.handle("updates:get-status", () => updateStatus);
+ipcMain.handle("updates:install", () => {
+  if (!app.isPackaged || updateStatus.state !== "downloaded") {
+    return { ok: false, error: "No downloaded update is ready to install." };
+  }
+  autoUpdater.quitAndInstall();
+  return { ok: true };
+});
 
 app.whenReady().then(() => {
   createWindow();
@@ -84,7 +91,7 @@ app.whenReady().then(() => {
       });
     });
     autoUpdater.on("error", (error) => {
-      log.error("Error al buscar o instalar actualizaciones:", error);
+      log.error("Error while checking for or installing updates:", error);
       publishUpdateStatus({
         state: "error",
         version: updateStatus.version,
@@ -93,7 +100,7 @@ app.whenReady().then(() => {
       });
     });
     autoUpdater.checkForUpdatesAndNotify().catch((error) => {
-      log.error("No se pudo comprobar si hay actualizaciones:", error);
+      log.error("Could not check for updates:", error);
     });
   }
 
