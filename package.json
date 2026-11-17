@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "start:dev": "npx electron ."
+    "start:dev": "npx electron .",
+    "build": "electron-builder --win nsis",
+    "release:win": "electron-builder --win nsis --publish always"
   },
   "devDependencies": {
     "electron": "^45.3.3",
@@ -15,5 +17,31 @@
   "dependencies": {
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.11"
+  },
+  "build": {
+    "appId": "com.acierto-incomodo.stormcodeeditor",
+    "productName": "Storm Code Editor",
+    "directories": {
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!build{,/**/*}",
+      "!README.md"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "include": "build/installer.nsh"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "acierto-incomodo",
+      "repo": "StormCodeEditor"
+    }
   }
 }

@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const { exec } = require("child_process");
+const log = require("electron-log");
+const { autoUpdater } = require("electron-updater");
 let pty = null;
 try {
   pty = require("node-pty");
@@ -37,6 +39,17 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+
+  if (app.isPackaged) {
+    autoUpdater.logger = log;
+    autoUpdater.allowDowngrade = true;
+    autoUpdater.on("error", (error) => {
+      log.error("Error al buscar o instalar actualizaciones:", error);
+    });
+    autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+      log.error("No se pudo comprobar si hay actualizaciones:", error);
+    });
+  }
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
