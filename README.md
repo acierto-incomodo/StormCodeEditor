@@ -26,13 +26,16 @@ npm run dist:linux
 npm run dist:clean
 ```
 
-`dist:win` builds NSIS and AppX packages; `dist:linux` builds DEB and AppImage
-packages. `dist:clean` removes the generated `dist` folder. AppX is intended
-for Microsoft Store submission; its Store identity and publisher must match the
+Each build command (`dist`, `dist:win`, `dist:linux`) cleans `dist` before
+building. `dist:win` builds NSIS and AppX packages; `dist:linux` builds DEB
+and AppImage packages. `dist:clean` removes the generated `dist` folder. AppX
+is intended for Microsoft Store submission; its Store identity and publisher must match the
 values assigned to the app in Partner Center. The AppX identity values in
 `package.json` are initial values: replace `appx.identityName`,
 `appx.applicationId`, `appx.publisherDisplayName`, and `appx.publisher` with the
 values assigned to the app before submitting. Building AppX requires Windows.
+Build artifacts use the `StormGamesStudios-Setup` base name and retain their
+format extension.
 
 The NSIS install location is set in `build/installer.nsh` using
 `APP_INSTALL_DIR`. Change that value to the desired path before building if you

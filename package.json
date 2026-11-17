@@ -9,10 +9,10 @@
     "start:dev": "npx electron .",
     "build": "electron-builder --win nsis",
     "release:win": "electron-builder --win nsis --publish always",
-    "dist": "electron-builder --win nsis appx --linux deb AppImage",
+    "dist": "npm run dist:clean && electron-builder --win nsis appx --linux deb AppImage",
     "dist:clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "dist:win": "electron-builder --win nsis appx",
-    "dist:linux": "electron-builder --linux deb AppImage"
+    "dist:win": "npm run dist:clean && electron-builder --win nsis appx",
+    "dist:linux": "npm run dist:clean && electron-builder --linux deb AppImage"
   },
   "devDependencies": {
     "electron": "^45.3.3",
@@ -35,6 +35,7 @@
       "!README.md"
     ],
     "win": {
+      "artifactName": "StormGamesStudios-Setup.${ext}",
       "target": [
         "nsis",
         "appx"
@@ -46,6 +47,7 @@
       "publisherDisplayName": "StormGamesStudios"
     },
     "linux": {
+      "artifactName": "StormGamesStudios-Setup.${ext}",
       "target": [
         "deb",
         "AppImage"
