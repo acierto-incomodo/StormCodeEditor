@@ -12,7 +12,11 @@
     "dist": "npm run dist:clean && electron-builder --win nsis appx --linux deb AppImage",
     "dist:clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "dist:win": "npm run dist:clean && electron-builder --win nsis appx",
-    "dist:linux": "npm run dist:clean && electron-builder --linux deb AppImage"
+    "dist:win:nsis": "npm run dist:clean && electron-builder --win nsis",
+    "dist:win:appx": "npm run dist:clean && electron-builder --win appx",
+    "dist:linux": "npm run dist:clean && electron-builder --linux deb AppImage",
+    "dist:linux:deb": "npm run dist:clean && electron-builder --linux deb",
+    "dist:linux:appimage": "npm run dist:clean && electron-builder --linux AppImage"
   },
   "devDependencies": {
     "electron": "^45.3.3",
