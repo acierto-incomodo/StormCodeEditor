@@ -1,12 +1,12 @@
 {
   "name": "electron-code-editor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "StormGamesStudios <meliodas.aitor@gmail.com>",
   "description": "A minimal Electron-based code editor built with Monaco",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "start:dev": "npx electron .",
+    "dev": "npx electron .",
     "build": "electron-builder --win nsis",
     "release:win": "electron-builder --win nsis --publish always",
     "dist": "npm run dist:clean && electron-builder --win nsis appx --linux deb AppImage",
@@ -24,6 +24,8 @@
     "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
+    "@banegasn/m3-button": "^2.2.5",
+    "discord-rpc": "^4.0.1",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.11"
   },
