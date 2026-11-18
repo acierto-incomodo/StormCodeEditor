@@ -10,6 +10,8 @@ body {
 
 /* ---------- TOOLBAR ---------- */
 #toolbar {
+  position: relative;
+  z-index: 10;
   height: 48px;
   background: rgba(25, 27, 33, 0.96);
   display: flex;
@@ -189,6 +191,7 @@ body {
   color: #ddd;
   font-size: 12px;
   line-height: 1.5;
+  pointer-events: none;
   white-space: normal;
 }
 
