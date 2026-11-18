@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const { exec } = require("child_process");
@@ -52,6 +52,14 @@ ipcMain.handle("updates:install", () => {
   }
   autoUpdater.quitAndInstall();
   return { ok: true };
+});
+
+ipcMain.handle("browser:open-window", async (_event, url) => {
+  if (typeof url === "string" && /^https?:\/\//i.test(url)) {
+    await shell.openExternal(url);
+    return { ok: true };
+  }
+  return { ok: false, error: "Invalid external URL." };
 });
 
 app.whenReady().then(() => {

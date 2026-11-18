@@ -7,7 +7,7 @@
              script-src 'self' https://unpkg.com 'unsafe-eval' 'unsafe-inline';
              style-src 'self' 'unsafe-inline' https:;" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Electron Code Editor</title>
+  <title>StormCodeEditor IDE</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css" />
@@ -19,13 +19,25 @@
 
 <body>
   <div id="toolbar">
-    <button id="newBtn">New</button>
-    <button id="openBtn">Open</button>
-    <button id="openFolderBtn">Open Folder</button>
-    <button id="openBrowserBtn">Browser</button>
-    <button id="saveBtn">Save</button>
-    <button id="saveAsBtn">Save As</button>
+    <div class="app-brand" aria-label="StormCodeEditor">
+      <span class="brand-mark">SCE</span>
+      <span>StormCodeEditor IDE</span>
+    </div>
+
+    <div class="toolbar-group" aria-label="File actions">
+      <button id="newBtn" title="New file"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>New</span></button>
+      <button id="openBtn" title="Open file"><i class="fa-regular fa-file" aria-hidden="true"></i><span>Open</span></button>
+      <button id="openFolderBtn" title="Open folder"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><span>Folder</span></button>
+      <button id="saveBtn" title="Save"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span>Save</span></button>
+      <button id="saveAsBtn" title="Save as"><i class="fa-solid fa-file-export" aria-hidden="true"></i><span>Save As</span></button>
+    </div>
+
     <span id="filePath" class="muted">(untitled)</span>
+
+    <div class="toolbar-actions">
+      <button id="openBrowserBtn" title="Toggle browser"><i class="fa-solid fa-globe" aria-hidden="true"></i></button>
+      <button id="terminalToggleToolbar" title="Toggle terminal"><i class="fa-solid fa-terminal" aria-hidden="true"></i></button>
+    </div>
 
     <!--
       <button id="update-preview-button" type="button" aria-pressed="false">
@@ -86,19 +98,22 @@
         <button id="terminalCopyBtn">Copy</button>
         <form id="terminalForm">
           <input id="terminalInput" placeholder="Run command..." />
-          <button id="terminalRunBtn">Run</button>
+          <button id="terminalRunBtn" type="button">Run</button>
         </form>
         <!-- <span id="terminalStatus" class="muted">(no terminal)</span> -->
       </div>
       <div id="terminal-container"></div>
     </div>
   </div>
-  <!-- //Browser integration -->
-  <div>
-    <button onclick="toggleBrowser()">ToggleBrowser</button>
-    <webview id="browser-container" src="https:www.google.com" allowpopups style="width:40%; height:40%; ">
-
-    </webview>
+  <!-- Browser integration -->
+  <div id="browser-container" role="dialog" aria-label="Browser">
+    <div class="browser-toolbar">
+      <span class="browser-title"><i class="fa-solid fa-globe" aria-hidden="true"></i> Browser</span>
+      <button id="browserCloseBtn" type="button" title="Close browser" aria-label="Close browser">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <webview id="browser-view" src="https://www.google.com" allowpopups></webview>
   </div>
   <!-- Scripts -->
   <script src="https://unpkg.com/monaco-editor@0.34.1/min/vs/loader.js"></script>

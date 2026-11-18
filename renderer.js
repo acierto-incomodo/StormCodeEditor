@@ -355,6 +355,19 @@ async function openFilePath(filePath) {
 window.addEventListener("DOMContentLoaded", () => {
   initializeUpdateIndicator();
 
+  const terminalToolbarButton = document.getElementById("terminalToggleToolbar");
+  if (terminalToolbarButton) {
+    terminalToolbarButton.addEventListener("click", () => toggleTerminal());
+  }
+
+  const browserCloseButton = document.getElementById("browserCloseBtn");
+  if (browserCloseButton) {
+    browserCloseButton.addEventListener("click", () => {
+      const container = document.getElementById("browser-container");
+      if (container) container.style.display = "none";
+    });
+  }
+
   document.getElementById("newBtn").addEventListener("click", () => {
     createTab({ name: "untitled", content: "" });
   });
@@ -512,7 +525,7 @@ function getBrowserView() {
 // Show browser & attach events
 function showBrowser() {
   const container = document.getElementById("browser-container");
-  container.style.display = "block";
+  container.style.display = "flex";
   setupWebviewEvents();
 }
 
@@ -528,8 +541,9 @@ function openGoogle() {
 
 function toggleBrowser() {
   const container = document.getElementById("browser-container");
-  const isOpen = container.style.display === "none";
-  container.style.display = isOpen ? "flex" : "none";
+  if (!container) return;
+  const isOpen = container.style.display === "flex";
+  container.style.display = isOpen ? "none" : "flex";
   if (!isOpen) setupWebviewEvents();
 }
 
