@@ -692,13 +692,13 @@ async function createTerminal(killExisting = false) {
     else statusEl.textContent = "PTY: unknown";
   }
 
-  // detect xterm.js and fit addon (loaded from CDN in index.html)
+  // Detect the local xterm.js and fit addon bundles loaded by index.html.
   const TerminalCtor = window.Terminal || window.XTerm || window.TerminalJs;
   const FitCtor = (window.FitAddon && window.FitAddon.FitAddon) || window.FitAddon;
   if (!TerminalCtor) {
-    container.textContent = "xterm.js could not be loaded. Check your connection to unpkg.com.";
+    container.textContent = "xterm.js could not be loaded from the local application files.";
     const status = document.getElementById("terminalStatus");
-    if (status) status.textContent = "xterm.js not loaded (check CDN/network)";
+    if (status) status.textContent = "xterm.js bundle could not be initialized.";
     const panel = document.getElementById("terminal-panel");
     if (panel) panel.classList.remove("hidden");
     return;

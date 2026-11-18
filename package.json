@@ -1,6 +1,6 @@
 {
   "name": "stormcodeeditor-ide",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "StormGamesStudios <meliodas.aitor@gmail.com>",
   "description": "A minimal Electron-based code editor built with Monaco",
   "main": "main.js",
@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "@banegasn/m3-button": "^2.2.5",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
     "discord-rpc": "^4.0.1",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.11",
@@ -73,5 +75,10 @@
       "owner": "acierto-incomodo",
       "repo": "StormCodeEditor"
     }
+  },
+  "allowScripts": {
+    "electron-winstaller@5.4.0": true,
+    "lzma-native@8.0.6": true,
+    "node-pty@1.1.0": true
   }
 }

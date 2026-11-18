@@ -11,7 +11,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
+  <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
 
   <!-- Optional icons (for folder/file icons like VS Code) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -119,9 +119,9 @@
     <webview id="browser-view" src="https://www.google.com" allowpopups></webview>
   </div>
   <!-- Scripts -->
+  <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
+  <script src="node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
   <script src="https://unpkg.com/monaco-editor@0.34.1/min/vs/loader.js"></script>
-  <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
-  <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
   <script src="renderer.js"></script>
 
   <!-- Explorer Toggle Logic -->
