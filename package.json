@@ -1,5 +1,5 @@
 {
-  "name": "electron-code-editor",
+  "name": "stormcodeeditor-ide",
   "version": "1.0.3",
   "author": "StormGamesStudios <meliodas.aitor@gmail.com>",
   "description": "A minimal Electron-based code editor built with Monaco",
