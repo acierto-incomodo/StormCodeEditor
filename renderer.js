@@ -191,7 +191,7 @@ function initializeUpdateIndicator() {
   const details = document.getElementById("update-details");
   const previewButton = document.getElementById("update-preview-button");
   const restartButton = document.getElementById("update-restart-button");
-  if (!indicator || !icon || !ring || !title || !details || !previewButton || !restartButton) return;
+  if (!indicator || !icon || !ring || !title || !details || !restartButton) return;
 
   let actualStatus = { state: "idle" };
   let previewActive = false;
@@ -245,46 +245,50 @@ function initializeUpdateIndicator() {
       cancelAnimationFrame(previewFrame);
       previewFrame = null;
     }
-    previewButton.setAttribute("aria-pressed", "false");
-    previewButton.textContent = "Preview update";
+    if (previewButton) {
+      previewButton.setAttribute("aria-pressed", "false");
+      previewButton.textContent = "Preview update";
+    }
     indicator.classList.remove("preview-active");
     renderUpdateStatus(actualStatus);
   }
 
-  previewButton.addEventListener("click", () => {
-    if (previewActive) {
-      closePreview();
-      return;
-    }
-
-    previewActive = true;
-    previewButton.setAttribute("aria-pressed", "true");
-    previewButton.textContent = "Close preview";
-    indicator.classList.add("preview-active");
-    const startedAt = performance.now();
-
-    function animatePreview(timestamp) {
-      if (!previewActive) return;
-      const progress = Math.min((timestamp - startedAt) / previewDuration, 1);
-      const transferred = Math.round(previewTotalBytes * progress);
-      renderUpdateStatus({
-        state: progress === 1 ? "downloaded" : "downloading",
-        version: "1.2.0",
-        percent: progress * 100,
-        transferred,
-        total: previewTotalBytes,
-        bytesPerSecond: previewTotalBytes / (previewDuration / 1000),
-      });
-
-      if (progress < 1) {
-        previewFrame = requestAnimationFrame(animatePreview);
-      } else {
-        previewFrame = null;
+  if (previewButton) {
+    previewButton.addEventListener("click", () => {
+      if (previewActive) {
+        closePreview();
+        return;
       }
-    }
 
-    previewFrame = requestAnimationFrame(animatePreview);
-  });
+      previewActive = true;
+      previewButton.setAttribute("aria-pressed", "true");
+      previewButton.textContent = "Close preview";
+      indicator.classList.add("preview-active");
+      const startedAt = performance.now();
+
+      function animatePreview(timestamp) {
+        if (!previewActive) return;
+        const progress = Math.min((timestamp - startedAt) / previewDuration, 1);
+        const transferred = Math.round(previewTotalBytes * progress);
+        renderUpdateStatus({
+          state: progress === 1 ? "downloaded" : "downloading",
+          version: "1.2.0",
+          percent: progress * 100,
+          transferred,
+          total: previewTotalBytes,
+          bytesPerSecond: previewTotalBytes / (previewDuration / 1000),
+        });
+
+        if (progress < 1) {
+          previewFrame = requestAnimationFrame(animatePreview);
+        } else {
+          previewFrame = null;
+        }
+      }
+
+      previewFrame = requestAnimationFrame(animatePreview);
+    });
+  }
 
   restartButton.addEventListener("click", async () => {
     if (previewActive) {
