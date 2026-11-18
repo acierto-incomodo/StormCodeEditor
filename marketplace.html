@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>Marketplace</title>
+  <link rel="stylesheet" href="app-pages.css">
+</head>
+<body>
+  <main class="app-page">
+    <header class="page-header">
+      <div class="page-icon">&#9638;</div>
+      <div>
+        <h1>Marketplace</h1>
+        <p>Explora extensiones para StormCodeEditor</p>
+      </div>
+    </header>
+
+    <input id="extensionSearch" class="search-box" type="search" placeholder="Buscar extensiones..." aria-label="Buscar extensiones">
+
+    <section class="extension-grid" id="extensionGrid">
+      <article class="extension-card" data-name="python tools">
+        <strong>Python Tools</strong>
+        <p>Herramientas básicas para trabajar con proyectos Python.</p>
+        <button type="button" disabled>Instalar</button>
+      </article>
+      <article class="extension-card" data-name="theme dark pro">
+        <strong>Dark Theme Pro</strong>
+        <p>Un tema oscuro moderno para el editor.</p>
+        <button type="button" disabled>Instalar</button>
+      </article>
+      <article class="extension-card" data-name="html formatter">
+        <strong>HTML Formatter</strong>
+        <p>Formato automático para documentos HTML.</p>
+        <button type="button" disabled>Instalar</button>
+      </article>
+      <article class="extension-card" data-name="git helpers">
+        <strong>Git Helpers</strong>
+        <p>Accesos rápidos para operaciones comunes de Git.</p>
+        <button type="button" disabled>Instalar</button>
+      </article>
+    </section>
+  </main>
+  <script src="marketplace.js"></script>
+</body>
+</html>

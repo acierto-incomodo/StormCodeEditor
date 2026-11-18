@@ -355,6 +355,21 @@ async function openFilePath(filePath) {
 window.addEventListener("DOMContentLoaded", () => {
   initializeUpdateIndicator();
 
+  const pageButtons = [
+    ["openSettingsBtn", "settings.html"],
+    ["openInfoBtn", "info.html"],
+    ["openMarketplaceBtn", "marketplace.html"],
+  ];
+
+  pageButtons.forEach(([buttonId, page]) => {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      button.addEventListener("click", () => {
+        window.electronAPI.openPage(page);
+      });
+    }
+  });
+
   const terminalToolbarButton = document.getElementById("terminalToggleToolbar");
   if (terminalToolbarButton) {
     terminalToolbarButton.addEventListener("click", () => toggleTerminal());
@@ -532,11 +547,10 @@ function showBrowser() {
 // Buttons
 function openGoogle() {
   console.log("Google CLicked");
-  console.log("Calling browserAPI.navigate...");
   console.log(window.browserAPI);
-
   showBrowser();
-  window.browserAPI.navigate("https://www.google.com");
+  const webview = getBrowserView();
+  if (webview) webview.src = "https://www.google.com";
 }
 
 function toggleBrowser() {
@@ -769,7 +783,10 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Sending command to backend:", cmd);
     // console.log(dirPath.toString());
 
-    const output = await window.terminalAPI.sendCommand(cmd, dirPath.toString());
+    const output = await window.terminalAPI.sendCommand(
+      cmd,
+      typeof dirPath === "string" ? dirPath : null
+    );
     console.log(output);
 
     document.getElementById("terminal-container").innerText = output.trim();

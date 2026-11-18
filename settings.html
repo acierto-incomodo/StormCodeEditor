@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+  <title>Settings</title>
+  <link rel="stylesheet" href="app-pages.css">
+</head>
+<body>
+  <main class="app-page">
+    <header class="page-header">
+      <div class="page-icon">&#9881;</div>
+      <div>
+        <h1 data-i18n="settingsTitle">Ajustes</h1>
+        <p data-i18n="settingsSubtitle">Personaliza StormCodeEditor</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2 data-i18n="language">Idioma</h2>
+      <div class="setting-row">
+        <div class="setting-label">
+          <strong data-i18n="language">Idioma</strong>
+          <span data-i18n="languageDescription">Idioma de la interfaz</span>
+        </div>
+        <select id="languageSelect" aria-label="Language">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </section>
+  </main>
+
+  <script src="app-pages.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

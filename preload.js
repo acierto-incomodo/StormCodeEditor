@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   readDir: (dirPath) => ipcRenderer.invoke("dir:read", dirPath),
   getUpdateStatus: () => ipcRenderer.invoke("updates:get-status"),
   installUpdate: () => ipcRenderer.invoke("updates:install"),
+  openPage: (page) => ipcRenderer.invoke("app:open-page", page),
+  getAppInfo: () => ipcRenderer.invoke("app:get-info"),
   onUpdateStatus: (callback) => {
     const listener = (event, status) => callback(status);
     ipcRenderer.on("updates:status", listener);
@@ -31,11 +33,6 @@ contextBridge.exposeInMainWorld("terminalAPI", {
 });
 
 contextBridge.exposeInMainWorld("browserAPI", {
-  navigate: (url) => ipcRenderer.invoke("browser:navigate", url),
-  goBack: () => ipcRenderer.invoke("browser:back"),
-  goForward: () => ipcRenderer.invoke("browser:forward"),
-  reload: () => ipcRenderer.invoke("browser:reload"),
-  receive: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)),
   openWindow: (url) => ipcRenderer.invoke("browser:open-window", url),
 });
 console.log("browserAPI loaded in preload");

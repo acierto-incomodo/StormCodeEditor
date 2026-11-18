@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>Información</title>
+  <link rel="stylesheet" href="app-pages.css">
+</head>
+<body>
+  <main class="app-page">
+    <header class="page-header">
+      <div class="page-icon">i</div>
+      <div>
+        <h1>StormCodeEditor</h1>
+        <p>Información de la aplicación</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>Detalles</h2>
+      <div class="info-row"><strong>Versión</strong><span id="appVersion">-</span></div>
+      <div class="info-row"><strong>Desarrollador</strong><span>StormGamesStudios</span></div>
+      <div class="info-row"><strong>Aplicación</strong><span id="appName">StormCodeEditor IDE</span></div>
+    </section>
+
+    <section class="panel">
+      <h2>Tecnologías usadas</h2>
+      <div class="tech-grid">
+        <article class="tech-card"><strong>Electron</strong><span>Framework de escritorio</span></article>
+        <article class="tech-card"><strong>Monaco Editor</strong><span>Editor de código</span></article>
+        <article class="tech-card"><strong>xterm.js</strong><span>Terminal integrada</span></article>
+        <article class="tech-card"><strong>Node.js</strong><span>Procesos y sistema de archivos</span></article>
+      </div>
+    </section>
+  </main>
+  <script src="info.js"></script>
+</body>
+</html>

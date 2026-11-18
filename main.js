@@ -62,6 +62,39 @@ ipcMain.handle("browser:open-window", async (_event, url) => {
   return { ok: false, error: "Invalid external URL." };
 });
 
+ipcMain.handle("app:get-info", () => ({
+  name: app.getName() || "StormCodeEditor IDE",
+  version: app.getVersion(),
+  author: "StormGamesStudios",
+}));
+
+ipcMain.handle("app:open-page", (_event, page) => {
+  const allowedPages = ["settings.html", "info.html", "marketplace.html"];
+  if (!allowedPages.includes(page)) {
+    return { ok: false, error: "Page not allowed." };
+  }
+
+  const pageWindow = new BrowserWindow({
+    width: 780,
+    height: 620,
+    minWidth: 620,
+    minHeight: 500,
+    parent: mainWindow,
+    modal: false,
+    autoHideMenuBar: true,
+    title: page.replace(".html", ""),
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false,
+    },
+  });
+
+  pageWindow.loadFile(page);
+  return { ok: true };
+});
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -330,7 +363,11 @@ ipcMain.handle("run-command", async (event, cmd, dirPath) => {
   console.log("path: " + dirPath);
 
   return new Promise((resolve) => {
-    exec(cmd, { shell: "powershell.exe", cwd: dirPath }, (error, stdout, stderr) => {
+    const options = { shell: "powershell.exe" };
+    if (typeof dirPath === "string" && dirPath) {
+      options.cwd = dirPath;
+    }
+    exec(cmd, options, (error, stdout, stderr) => {
       if (error) {
         resolve(stderr || error.message);
       } else {
