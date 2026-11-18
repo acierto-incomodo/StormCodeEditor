@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "@banegasn/m3-button": "^2.2.5",
-    "@xterm/addon-fit": "^0.10.0",
-    "@xterm/xterm": "^5.5.0",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
     "discord-rpc": "^4.0.1",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.11",
