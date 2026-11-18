@@ -1,10 +1,4 @@
 const translations = {
-  es: {
-    settingsTitle: "Ajustes",
-    settingsSubtitle: "Personaliza StormCodeEditor",
-    language: "Idioma",
-    languageDescription: "Idioma de la interfaz",
-  },
   en: {
     settingsTitle: "Settings",
     settingsSubtitle: "Customize StormCodeEditor",
@@ -14,7 +8,7 @@ const translations = {
 };
 
 function getLanguage() {
-  return localStorage.getItem("stormcode-language") || "es";
+  return "en";
 }
 
 function applyStoredLanguage() {
