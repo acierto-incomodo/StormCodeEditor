@@ -16,7 +16,8 @@
     "dist:win:appx": "npm run dist:clean && electron-builder --win appx",
     "dist:linux": "npm run dist:clean && electron-builder --linux deb AppImage",
     "dist:linux:deb": "npm run dist:clean && electron-builder --linux deb",
-    "dist:linux:appimage": "npm run dist:clean && electron-builder --linux AppImage"
+    "dist:linux:appimage": "npm run dist:clean && electron-builder --linux AppImage",
+    "rebuild:node-pty": "npm.cmd exec electron-rebuild -- --force --only node-pty"
   },
   "devDependencies": {
     "electron": "^45.3.4",
@@ -27,7 +28,8 @@
     "@banegasn/m3-button": "^2.2.5",
     "discord-rpc": "^4.0.1",
     "electron-log": "^5.4.4",
-    "electron-updater": "^6.8.11"
+    "electron-updater": "^6.8.11",
+    "node-pty": "^1.1.0"
   },
   "build": {
     "appId": "com.acierto-incomodo.stormcodeeditor",
