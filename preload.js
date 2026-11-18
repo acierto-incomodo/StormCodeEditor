@@ -13,6 +13,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
   installUpdate: () => ipcRenderer.invoke("updates:install"),
   openPage: (page) => ipcRenderer.invoke("app:open-page", page),
   getAppInfo: () => ipcRenderer.invoke("app:get-info"),
+  listLanguages: () => ipcRenderer.invoke("languages:list"),
+  getLanguage: (language) => ipcRenderer.invoke("languages:get", language),
+  openLanguagesFolder: () => ipcRenderer.invoke("languages:open-folder"),
+  setLanguage: (language) => ipcRenderer.invoke("languages:set", language),
+  onLanguageChanged: (callback) => {
+    const listener = (_event, language) => callback(language);
+    ipcRenderer.on("languages:changed", listener);
+    return () => ipcRenderer.removeListener("languages:changed", listener);
+  },
   onUpdateStatus: (callback) => {
     const listener = (event, status) => callback(status);
     ipcRenderer.on("updates:status", listener);

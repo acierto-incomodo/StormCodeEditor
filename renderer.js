@@ -120,7 +120,7 @@ function setActiveTab(id) {
   if (!tab) return;
   activeTabId = id;
   editor.setModel(tab.model);
-  document.getElementById("filePath").textContent = tab.filePath || "(untitled)";
+  document.getElementById("filePath").textContent = tab.filePath || window.t("untitled");
   renderTabs();
 }
 
@@ -128,7 +128,7 @@ function closeTab(id) {
   const idx = tabs.findIndex((t) => t.id === id);
   if (idx === -1) return;
   const tab = tabs[idx];
-  if (tab.isDirty && !confirm("Discard unsaved changes?")) return;
+  if (tab.isDirty && !confirm(window.t("discardChanges"))) return;
   // dispose model
   if (tab.model) tab.model.dispose();
   tabs.splice(idx, 1);
@@ -137,7 +137,7 @@ function closeTab(id) {
     else {
       activeTabId = null;
       editor.setModel(null);
-      document.getElementById("filePath").textContent = "(untitled)";
+      document.getElementById("filePath").textContent = window.t("untitled");
     }
   }
   renderTabs();
@@ -145,15 +145,17 @@ function closeTab(id) {
 
 function createTab({ filePath, name, content }) {
   const id = Date.now() + Math.random();
-  const language = getLangFromPath(filePath || name);
+  const isUntitled = !filePath && (!name || name === "untitled");
+  const language = getLangFromPath(filePath || (isUntitled ? "" : name));
   const uri = filePath
     ? monaco.Uri.file(filePath)
-    : monaco.Uri.parse("inmemory:///" + name + id + "." + language);
+    : monaco.Uri.parse("inmemory:///" + (name || "untitled") + id + "." + language);
   const model = monaco.editor.createModel(content || "", language, uri);
   const tab = {
     id,
     filePath,
-    name: name || (filePath ? requireName(filePath) : "untitled"),
+    name: isUntitled ? window.t("untitledTab") : name || requireName(filePath),
+    isUntitled,
     content,
     model,
     isDirty: false,
@@ -166,6 +168,17 @@ function createTab({ filePath, name, content }) {
   renderTabs();
   setActiveTab(id);
 }
+
+window.addEventListener("app-language-changed", () => {
+  tabs.forEach((tab) => {
+    if (tab.isUntitled) tab.name = window.t("untitledTab");
+  });
+  renderTabs();
+  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+  if (activeTab && activeTab.isUntitled) {
+    document.getElementById("filePath").textContent = window.t("untitled");
+  }
+});
 
 function requireName(fp) {
   return fp.split(/[\\/]/).pop();
@@ -216,20 +229,26 @@ function initializeUpdateIndicator() {
     restartButton.classList.toggle("hidden", !isDownloaded);
 
     if (isDownloaded) {
-      title.textContent = "Update ready";
-      details.textContent = `Version ${status.version}. Restart to install the update.`;
+      title.textContent = window.t("updateReady");
+      details.textContent = window.t("restartToUpdate", { version: status.version });
     } else if (status.state === "error") {
-      title.textContent = "Update error";
-      details.textContent = status.message || "Could not complete the update.";
+      title.textContent = window.t("updateError");
+      details.textContent = status.message || window.t("updateFailed");
     } else {
-      title.textContent = "Downloading update";
+      title.textContent = window.t("downloadingUpdate");
       const transferred = formatUpdateBytes(status.transferred);
       const total = formatUpdateBytes(status.total);
       const speed = formatUpdateBytes(status.bytesPerSecond);
-      const transferInfo = transferred && total ? ` · ${transferred} of ${total}` : "";
-      const speedInfo = speed ? ` · ${speed}/s` : "";
-      details.textContent =
-        `Version ${status.version || ""} · ${percent.toFixed(1)}%${transferInfo}${speedInfo}`;
+      const transferInfo = transferred && total
+        ? window.t("transferInfo", { transferred, total })
+        : "";
+      const speedInfo = speed ? window.t("speedInfo", { speed }) : "";
+      details.textContent = window.t("updateDetails", {
+        version: status.version || "",
+        percent: percent.toFixed(1),
+        transferInfo,
+        speedInfo,
+      });
     }
     icon.setAttribute("aria-label", `${title.textContent}. ${details.textContent}`);
   }
@@ -239,6 +258,13 @@ function initializeUpdateIndicator() {
     if (!previewActive) renderUpdateStatus(actualStatus);
   }
 
+  window.addEventListener("app-language-changed", () => {
+    if (previewButton) {
+      previewButton.textContent = window.t(previewActive ? "closePreview" : "previewUpdate");
+    }
+    renderUpdateStatus(actualStatus);
+  });
+
   function closePreview() {
     previewActive = false;
     if (previewFrame !== null) {
@@ -247,7 +273,7 @@ function initializeUpdateIndicator() {
     }
     if (previewButton) {
       previewButton.setAttribute("aria-pressed", "false");
-      previewButton.textContent = "Preview update";
+      previewButton.textContent = window.t("previewUpdate");
     }
     indicator.classList.remove("preview-active");
     renderUpdateStatus(actualStatus);
@@ -262,7 +288,7 @@ function initializeUpdateIndicator() {
 
       previewActive = true;
       previewButton.setAttribute("aria-pressed", "true");
-      previewButton.textContent = "Close preview";
+      previewButton.textContent = window.t("closePreview");
       indicator.classList.add("preview-active");
       const startedAt = performance.now();
 
@@ -307,7 +333,7 @@ function initializeUpdateIndicator() {
       actualStatus = {
         ...actualStatus,
         state: "error",
-        message: error.message || "Could not restart to install the update.",
+        message: error.message || window.t("restartInstallUpdate"),
       };
       renderUpdateStatus(actualStatus);
     }
@@ -329,7 +355,7 @@ require(["vs/editor/editor.main"], function () {
   });
 
   // create initial untitled tab
-  createTab({ name: "untitled", content: "" });
+  window.languageReady.then(() => createTab({ name: "untitled", content: "" }));
 });
 
 async function openFileDialog() {
@@ -348,12 +374,12 @@ async function openFilePath(filePath) {
   if (res && res.ok) {
     createTab({ filePath, name: filePath.split(/[\\/]/).pop(), content: res.content });
   } else {
-    alert("Failed to read file: " + (res && res.error));
+    alert(window.t("readFileFailed", { error: (res && res.error) || "" }));
   }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  initializeUpdateIndicator();
+  window.languageReady.then(initializeUpdateIndicator);
 
   const pageButtons = [
     ["openSettingsBtn", "settings.html"],
@@ -415,7 +441,7 @@ window.addEventListener("DOMContentLoaded", () => {
       if (w && w.ok) {
         tab.isDirty = false;
         renderTabs();
-      } else alert("Save failed: " + (w && w.error));
+      } else alert(window.t("saveFailed", { error: (w && w.error) || "" }));
     } else {
       const saveRes = await window.electronAPI.saveFile({ filePath: null, content });
       if (saveRes && !saveRes.canceled) {
@@ -445,7 +471,7 @@ window.addEventListener("DOMContentLoaded", () => {
           renderRootFolder(currentRoot);
         }
       } catch (e) {
-        console.warn("refresh explorer failed", e);
+        console.warn(window.t("refreshExplorerFailed"), e);
       }
     }
   });
@@ -678,27 +704,29 @@ async function createTerminal(killExisting = false) {
 
   const res = await window.terminalAPI.create({ cols, rows, cwd: dirPath });
   if (!res || !res.ok) {
-    container.textContent = "Terminal error: " + ((res && res.error) || "unknown error");
+    container.textContent = window.t("terminalError", {
+      error: (res && res.error) || window.t("unknownError"),
+    });
     const status = document.getElementById("terminalStatus");
-    if (status) status.textContent = "Terminal error: " + (res && res.error);
+    if (status) status.textContent = window.t("terminalError", { error: (res && res.error) || "" });
     return;
   }
   terminalId = res.id;
   // show whether we have real PTY support or fallback
   const statusEl = document.getElementById("terminalStatus");
   if (statusEl) {
-    if (res.pty === true) statusEl.textContent = "PTY: native";
-    else if (res.fallback) statusEl.textContent = "PTY: fallback";
-    else statusEl.textContent = "PTY: unknown";
+    if (res.pty === true) statusEl.textContent = window.t("terminalNative");
+    else if (res.fallback) statusEl.textContent = window.t("terminalFallback");
+    else statusEl.textContent = window.t("terminalUnknown");
   }
 
   // Detect the local xterm.js and fit addon bundles loaded by index.html.
   const TerminalCtor = window.Terminal || window.XTerm || window.TerminalJs;
   const FitCtor = (window.FitAddon && window.FitAddon.FitAddon) || window.FitAddon;
   if (!TerminalCtor) {
-    container.textContent = "xterm.js could not be loaded from the local application files.";
+    container.textContent = window.t("xtermLoadError");
     const status = document.getElementById("terminalStatus");
-    if (status) status.textContent = "xterm.js bundle could not be initialized.";
+    if (status) status.textContent = window.t("xtermInitError");
     const panel = document.getElementById("terminal-panel");
     if (panel) panel.classList.remove("hidden");
     return;
@@ -726,7 +754,7 @@ async function createTerminal(killExisting = false) {
 
   window.terminalAPI.onExit(({ id, exitCode }) => {
     if (id === terminalId && term)
-      term.write("\r\n[process exited " + exitCode + "]\r\n");
+      term.write("\r\n" + window.t("processExited", { code: exitCode }) + "\r\n");
   });
 
   const status = document.getElementById("terminalStatus");
@@ -760,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("terminalInput");
 
   if (!form) {
-    console.error("terminalForm not found — check your HTML ID");
+    console.error(window.t("terminalFormMissing"));
     return;
   }
 

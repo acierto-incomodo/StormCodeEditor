@@ -21,6 +21,73 @@ console.log("MAIN PROCESS STARTED");
 let mainWindow = null;
 let updateStatus = { state: "idle" };
 
+function getLanguagesDirectory() {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, "languages")
+    : path.join(__dirname, "languages");
+}
+
+ipcMain.handle("languages:list", () => {
+  try {
+    const directory = getLanguagesDirectory();
+    const languages = fs.readdirSync(directory)
+      .filter((name) => /^[a-z]{2}_[A-Z]{2}\.json$/.test(name))
+      .map((name) => {
+        const code = path.basename(name, ".json");
+        const data = JSON.parse(fs.readFileSync(path.join(directory, name), "utf8"));
+        if (typeof data.languageName !== "string" || !data.languageName) {
+          throw new Error(`Missing languageName in ${name}`);
+        }
+        return { code, name: data.languageName };
+      });
+    return { ok: true, languages };
+  } catch (error) {
+    log.error("Could not list language files:", error);
+    return { ok: false, error: String(error) };
+  }
+});
+
+ipcMain.handle("languages:get", (_event, language) => {
+  if (typeof language !== "string" || !/^[a-z]{2}_[A-Z]{2}$/.test(language)) {
+    return { ok: false, error: "Invalid language code." };
+  }
+  try {
+    const filePath = path.join(getLanguagesDirectory(), `${language}.json`);
+    const translations = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    if (!translations || typeof translations !== "object" || Array.isArray(translations)) {
+      throw new Error(`Invalid translation object in ${language}.json`);
+    }
+    return { ok: true, translations };
+  } catch (error) {
+    log.error(`Could not load language ${language}:`, error);
+    return { ok: false, error: String(error) };
+  }
+});
+
+ipcMain.handle("languages:open-folder", async () => {
+  try {
+    const directory = getLanguagesDirectory();
+    await fs.promises.mkdir(directory, { recursive: true });
+    const error = await shell.openPath(directory);
+    return error ? { ok: false, error } : { ok: true };
+  } catch (error) {
+    log.error("Could not open languages folder:", error);
+    return { ok: false, error: String(error) };
+  }
+});
+
+ipcMain.handle("languages:set", (_event, language) => {
+  if (typeof language !== "string" || !/^[a-z]{2}_[A-Z]{2}$/.test(language)) {
+    return { ok: false, error: "Invalid language code." };
+  }
+  const filePath = path.join(getLanguagesDirectory(), `${language}.json`);
+  if (!fs.existsSync(filePath)) return { ok: false, error: `Language file not found: ${language}.json` };
+  BrowserWindow.getAllWindows().forEach((window) => {
+    window.webContents.send("languages:changed", language);
+  });
+  return { ok: true };
+});
+
 function publishUpdateStatus(status) {
   updateStatus = status;
   if (mainWindow && !mainWindow.isDestroyed()) {

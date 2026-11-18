@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
-  <title>StormCodeEditor IDE · Settings</title>
+  <title data-i18n="settingsTitle">StormCodeEditor IDE · Settings</title>
   <link rel="stylesheet" href="app-pages.css">
 </head>
 <body>
@@ -12,22 +12,21 @@
     <header class="page-header">
       <div class="page-icon">&#9881;</div>
       <div>
-        <h1>Settings</h1>
-        <p>Customize StormCodeEditor</p>
+        <h1 data-i18n="settingsTitle">Settings</h1>
+        <p data-i18n="settingsSubtitle">Customize StormCodeEditor</p>
       </div>
     </header>
 
     <section class="panel">
-      <h2>Language</h2>
+      <h2 data-i18n="language">Language</h2>
       <div class="setting-row">
         <div class="setting-label">
-          <strong>Language</strong>
-          <span>Interface language</span>
+          <strong data-i18n="language">Language</strong>
+          <span data-i18n="languageDescription">Interface language</span>
         </div>
-        <select id="languageSelect" aria-label="Language" disabled>
-          <option value="en">English</option>
-        </select>
+        <select id="languageSelect" data-i18n-aria-label="language" disabled></select>
       </div>
+      <button id="openLanguagesFolderBtn" type="button" data-i18n="openLanguagesFolder">Open languages folder</button>
     </section>
   </main>
 

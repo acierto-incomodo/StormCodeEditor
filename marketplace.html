@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
-  <title>StormCodeEditor IDE · Marketplace</title>
+  <title data-i18n="marketplaceTitle">StormCodeEditor IDE · Marketplace</title>
   <link rel="stylesheet" href="app-pages.css">
 </head>
 <body>
@@ -12,38 +12,39 @@
     <header class="page-header">
       <div class="page-icon">&#9638;</div>
       <div>
-        <h1>Marketplace</h1>
-        <p>Explore extensions for StormCodeEditor IDE</p>
+        <h1 data-i18n="marketplace">Marketplace</h1>
+        <p data-i18n="exploreExtensions">Explore extensions for StormCodeEditor IDE</p>
       </div>
     </header>
 
-    <input id="extensionSearch" class="search-box" type="search" placeholder="Search extensions..." aria-label="Search extensions">
+    <input id="extensionSearch" class="search-box" type="search" data-i18n-placeholder="searchExtensions" data-i18n-aria-label="searchExtensions">
 
     <section class="extension-grid" id="extensionGrid">
       <!--
       <article class="extension-card" data-name="python tools">
-        <strong>Python Tools</strong>
-        <p>Basic tools for working with Python projects.</p>
-        <button type="button" disabled>Install</button>
+        <strong data-i18n="pythonTools">Python Tools</strong>
+        <p data-i18n="pythonToolsDescription">Basic tools for working with Python projects.</p>
+        <button type="button" disabled data-i18n="install">Install</button>
       </article>
       <article class="extension-card" data-name="theme dark pro">
-        <strong>Dark Theme Pro</strong>
-        <p>A modern dark theme for the editor.</p>
-        <button type="button" disabled>Install</button>
+        <strong data-i18n="darkThemePro">Dark Theme Pro</strong>
+        <p data-i18n="darkThemeDescription">A modern dark theme for the editor.</p>
+        <button type="button" disabled data-i18n="install">Install</button>
       </article>
       <article class="extension-card" data-name="html formatter">
-        <strong>HTML Formatter</strong>
-        <p>Automatic formatting for HTML documents.</p>
-        <button type="button" disabled>Install</button>
+        <strong data-i18n="htmlFormatter">HTML Formatter</strong>
+        <p data-i18n="htmlFormatterDescription">Automatic formatting for HTML documents.</p>
+        <button type="button" disabled data-i18n="install">Install</button>
       </article>
       <article class="extension-card" data-name="git helpers">
-        <strong>Git Helpers</strong>
-        <p>Quick actions for common Git operations.</p>
-        <button type="button" disabled>Install</button>
+        <strong data-i18n="gitHelpers">Git Helpers</strong>
+        <p data-i18n="gitHelpersDescription">Quick actions for common Git operations.</p>
+        <button type="button" disabled data-i18n="install">Install</button>
       </article>
     -->
     </section>
   </main>
+  <script src="app-pages.js"></script>
   <script src="marketplace.js"></script>
 </body>
 </html>

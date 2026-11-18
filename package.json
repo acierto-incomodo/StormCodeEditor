@@ -1,6 +1,6 @@
 {
   "name": "stormcodeeditor-ide",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "StormGamesStudios <meliodas.aitor@gmail.com>",
   "description": "A minimal Electron-based code editor built with Monaco",
   "main": "main.js",
@@ -41,8 +41,18 @@
     },
     "files": [
       "**/*",
+      "!languages{,/**/*}",
       "!build{,/**/*}",
       "!README.md"
+    ],
+    "extraResources": [
+      {
+        "from": "languages",
+        "to": "languages",
+        "filter": [
+          "**/*.json"
+        ]
+      }
     ],
     "win": {
       "artifactName": "StormGamesStudios-Setup.${ext}",

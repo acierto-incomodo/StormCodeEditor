@@ -7,7 +7,7 @@
              script-src 'self' https://unpkg.com 'unsafe-eval' 'unsafe-inline';
              style-src 'self' 'unsafe-inline' https:;" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>StormCodeEditor IDE · Editor</title>
+  <title data-i18n="editorTitle">StormCodeEditor IDE · Editor</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css" />
@@ -21,25 +21,25 @@
   <div id="toolbar">
     <div class="app-brand" aria-label="StormCodeEditor">
       <span class="brand-mark">SCE</span>
-      <span>StormCodeEditor IDE</span>
+      <span data-i18n="appBrand">StormCodeEditor IDE</span>
     </div>
 
-    <div class="toolbar-group" aria-label="File actions">
-      <button id="newBtn" title="New file"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>New</span></button>
-      <button id="openBtn" title="Open file"><i class="fa-regular fa-file" aria-hidden="true"></i><span>Open</span></button>
-      <button id="openFolderBtn" title="Open folder"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><span>Folder</span></button>
-      <button id="saveBtn" title="Save"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span>Save</span></button>
-      <button id="saveAsBtn" title="Save as"><i class="fa-solid fa-file-export" aria-hidden="true"></i><span>Save As</span></button>
+    <div class="toolbar-group" data-i18n-aria-label="fileActions">
+      <button id="newBtn" data-i18n-title="newFile"><i class="fa-solid fa-plus" aria-hidden="true"></i><span data-i18n="new">New</span></button>
+      <button id="openBtn" data-i18n-title="openFile"><i class="fa-regular fa-file" aria-hidden="true"></i><span data-i18n="open">Open</span></button>
+      <button id="openFolderBtn" data-i18n-title="openFolder"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><span data-i18n="folder">Folder</span></button>
+      <button id="saveBtn" data-i18n-title="save"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span data-i18n="save">Save</span></button>
+      <button id="saveAsBtn" data-i18n-title="saveAs"><i class="fa-solid fa-file-export" aria-hidden="true"></i><span data-i18n="saveAs">Save As</span></button>
     </div>
 
     <span id="filePath" class="muted">(untitled)</span>
 
     <div class="toolbar-actions">
-      <button id="openBrowserBtn" title="Toggle browser"><i class="fa-solid fa-globe" aria-hidden="true"></i></button>
-      <button id="terminalToggleToolbar" title="Toggle terminal"><i class="fa-solid fa-terminal" aria-hidden="true"></i></button>
-      <button id="openMarketplaceBtn" title="Marketplace"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i></button>
-      <button id="openSettingsBtn" title="Settings"><i class="fa-solid fa-gear" aria-hidden="true"></i></button>
-      <button id="openInfoBtn" title="About"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button>
+      <button id="openBrowserBtn" data-i18n-title="toggleBrowser"><i class="fa-solid fa-globe" aria-hidden="true"></i></button>
+      <button id="terminalToggleToolbar" data-i18n-title="toggleTerminal"><i class="fa-solid fa-terminal" aria-hidden="true"></i></button>
+      <button id="openMarketplaceBtn" data-i18n-title="marketplace"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i></button>
+      <button id="openSettingsBtn" data-i18n-title="settingsTitle"><i class="fa-solid fa-gear" aria-hidden="true"></i></button>
+      <button id="openInfoBtn" data-i18n-title="about"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button>
     </div>
 
     <!--
@@ -49,7 +49,7 @@
     -->
 
     <div id="update-indicator" class="update-indicator hidden">
-      <div id="update-status-icon" class="update-status-icon" role="group" aria-label="Update status"
+      <div id="update-status-icon" class="update-status-icon" role="group" data-i18n-aria-label="updateStatus"
         aria-describedby="update-tooltip">
         <span class="update-progress-ring" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
@@ -71,7 +71,7 @@
     <div id="top">
       <!-- Sidebar (File Explorer) -->
       <div id="sidebar">
-        <div class="sidebar-header">EXPLORER</div>
+        <div class="sidebar-header" data-i18n="explorer">EXPLORER</div>
 
         <div id="fileTree">
           <!-- Sample structure (will be filled dynamically by your Electron renderer.js) -->
@@ -95,13 +95,13 @@
     <!-- Terminal Panel (bottom, VS Code style) -->
     <div id="terminal-panel" class="hidden">
       <div id="terminal-toolbar">
-        <button id="terminalToggle">Toggle Terminal</button>
+        <button id="terminalToggle" data-i18n="toggleTerminal">Toggle Terminal</button>
         <!-- <button id="newTerminalBtn">New Terminal</button> -->
-        <button id="terminalClearBtn">Clear</button>
-        <button id="terminalCopyBtn">Copy</button>
+        <button id="terminalClearBtn" data-i18n="clear">Clear</button>
+        <button id="terminalCopyBtn" data-i18n="copy">Copy</button>
         <form id="terminalForm">
-          <input id="terminalInput" placeholder="Run command..." />
-          <button id="terminalRunBtn" type="submit">Run</button>
+          <input id="terminalInput" data-i18n-placeholder="runCommand" />
+          <button id="terminalRunBtn" type="submit" data-i18n="run">Run</button>
         </form>
         <!-- <span id="terminalStatus" class="muted">(no terminal)</span> -->
       </div>
@@ -109,10 +109,10 @@
     </div>
   </div>
   <!-- Browser integration -->
-  <div id="browser-container" role="dialog" aria-label="Browser">
+  <div id="browser-container" role="dialog" data-i18n-aria-label="browser">
     <div class="browser-toolbar">
-      <span class="browser-title"><i class="fa-solid fa-globe" aria-hidden="true"></i> Browser</span>
-      <button id="browserCloseBtn" type="button" title="Close browser" aria-label="Close browser">
+      <span class="browser-title"><i class="fa-solid fa-globe" aria-hidden="true"></i> <span data-i18n="browser">Browser</span></span>
+      <button id="browserCloseBtn" type="button" data-i18n-title="closeBrowser" data-i18n-aria-label="closeBrowser">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
     </div>
@@ -122,6 +122,7 @@
   <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
   <script src="node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
   <script src="https://unpkg.com/monaco-editor@0.34.1/min/vs/loader.js"></script>
+  <script src="app-pages.js"></script>
   <script src="renderer.js"></script>
 
   <!-- Explorer Toggle Logic -->

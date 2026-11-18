@@ -41,6 +41,12 @@ The NSIS install location is set in `build/installer.nsh` using
 `APP_INSTALL_DIR`. Change that value to the desired path before building if you
 want to use a different location.
 
+Interface translations are JSON files in `languages/`, named with locale codes
+such as `en_US.json` and `es_ES.json`. The installed files are available in
+`resources/languages` inside the application install directory and can be opened
+from Settings. Installer builds copy these files as external resources, replacing
+files with matching names during installation.
+
 Linux targets should be built on Linux, or with Docker configured for
 cross-platform builds.
 
