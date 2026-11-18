@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
-const { exec } = require("child_process");
 const log = require("electron-log");
 const { autoUpdater } = require("electron-updater");
 let pty = null;
@@ -237,10 +236,14 @@ ipcMain.handle("dir:read", async (event, dirPath) => {
 // Terminal (PTY) management
 const terminals = new Map();
 
-ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } = {}) => {
+ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell, cwd } = {}) => {
   const shellCmd =
     shell ||
     (process.platform === "win32" ? "powershell.exe" : process.env.SHELL || "bash");
+  const terminalCwd =
+    typeof cwd === "string" && fs.existsSync(cwd) && fs.statSync(cwd).isDirectory()
+      ? cwd
+      : process.cwd();
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
   if (pty) {
@@ -248,7 +251,7 @@ ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } 
       name: "xterm-color",
       cols,
       rows,
-      cwd: process.cwd(),
+      cwd: terminalCwd,
       env: process.env,
     });
     terminals.set(id, term);
@@ -271,7 +274,7 @@ ipcMain.handle("terminal:create", async (event, { cols = 80, rows = 24, shell } 
   try {
     const cp = require("child_process");
     const child = cp.spawn(shellCmd, [], {
-      cwd: process.cwd(),
+      cwd: terminalCwd,
       env: process.env,
       shell: true,
     });
@@ -356,25 +359,6 @@ ipcMain.handle("dialog:saveAs", async (event, content) => {
   if (canceled) return { canceled: true };
   fs.writeFileSync(filePath, content, "utf8");
   return { canceled: false, filePath };
-});
-
-ipcMain.handle("run-command", async (event, cmd, dirPath) => {
-  console.log("Received from renderer:", cmd);
-  console.log("path: " + dirPath);
-
-  return new Promise((resolve) => {
-    const options = { shell: "powershell.exe" };
-    if (typeof dirPath === "string" && dirPath) {
-      options.cwd = dirPath;
-    }
-    exec(cmd, options, (error, stdout, stderr) => {
-      if (error) {
-        resolve(stderr || error.message);
-      } else {
-        resolve(stdout || stderr);
-      }
-    });
-  });
 });
 
 app.on("window-all-closed", () => {

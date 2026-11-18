@@ -609,7 +609,6 @@ if (newTermBtn)
 // Terminal toolbar extra features
 const termClearBtn = document.getElementById("terminalClearBtn");
 const termCopyBtn = document.getElementById("terminalCopyBtn");
-const termRunBtn = document.getElementById("terminalRunBtn");
 const termInput = document.getElementById("terminalInput");
 if (termClearBtn)
   termClearBtn.addEventListener("click", () => {
@@ -627,16 +626,6 @@ if (termCopyBtn)
       }
     }
   });
-if (termRunBtn)
-  termRunBtn.addEventListener("click", async () => {
-    if (!term) await createTerminal();
-    const val = termInput ? termInput.value : "";
-    if (val && terminalId) {
-      window.terminalAPI.write(terminalId, val + "\r");
-      if (termInput) termInput.value = "";
-    }
-  });
-
 // Keyboard shortcut: Ctrl+` toggles terminal (and Cmd+` on mac)
 window.addEventListener("keydown", (e) => {
   const isBacktick = e.key === "`" || e.code === "Backquote";
@@ -687,8 +676,9 @@ async function createTerminal(killExisting = false) {
   const cols = Math.max(40, Math.floor(container.clientWidth / 9));
   const rows = Math.max(10, Math.floor(container.clientHeight / 18));
 
-  const res = await window.terminalAPI.create({ cols, rows });
+  const res = await window.terminalAPI.create({ cols, rows, cwd: dirPath });
   if (!res || !res.ok) {
+    container.textContent = "Terminal error: " + ((res && res.error) || "unknown error");
     const status = document.getElementById("terminalStatus");
     if (status) status.textContent = "Terminal error: " + (res && res.error);
     return;
@@ -704,9 +694,9 @@ async function createTerminal(killExisting = false) {
 
   // detect xterm.js and fit addon (loaded from CDN in index.html)
   const TerminalCtor = window.Terminal || window.XTerm || window.TerminalJs;
-  const FitCtor =
-    window.FitAddon || (window.FitAddon && window.FitAddon.FitAddon) || window.FitAddon;
+  const FitCtor = (window.FitAddon && window.FitAddon.FitAddon) || window.FitAddon;
   if (!TerminalCtor) {
+    container.textContent = "xterm.js could not be loaded. Check your connection to unpkg.com.";
     const status = document.getElementById("terminalStatus");
     if (status) status.textContent = "xterm.js not loaded (check CDN/network)";
     const panel = document.getElementById("terminal-panel");
@@ -780,17 +770,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const cmd = input.value.trim();
     if (!cmd) return;
 
-    console.log("Sending command to backend:", cmd);
-    // console.log(dirPath.toString());
-
-    const output = await window.terminalAPI.sendCommand(
-      cmd,
-      typeof dirPath === "string" ? dirPath : null
-    );
-    console.log(output);
-
-    document.getElementById("terminal-container").innerText = output.trim();
-
+    if (!term) await createTerminal();
+    if (!term || !terminalId) return;
+    window.terminalAPI.write(terminalId, cmd + "\r");
+    term.focus();
     input.value = "";
   });
 });

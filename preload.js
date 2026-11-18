@@ -29,7 +29,6 @@ contextBridge.exposeInMainWorld("terminalAPI", {
   kill: (id) => ipcRenderer.invoke("terminal:kill", id),
   onData: (cb) => ipcRenderer.on("terminal:data", (event, arg) => cb(arg)),
   onExit: (cb) => ipcRenderer.on("terminal:exit", (event, arg) => cb(arg)),
-  sendCommand: (cmd, dirPath) => ipcRenderer.invoke("run-command", cmd, dirPath),
 });
 
 contextBridge.exposeInMainWorld("browserAPI", {
