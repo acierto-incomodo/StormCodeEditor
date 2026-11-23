@@ -55,7 +55,7 @@
       }
     ],
     "win": {
-      "artifactName": "StormGamesStudios-Setup.${ext}",
+      "artifactName": "StormCodeEditor-Setup.${ext}",
       "target": [
         "nsis",
         "appx"
@@ -67,7 +67,7 @@
       "publisherDisplayName": "StormGamesStudios"
     },
     "linux": {
-      "artifactName": "StormGamesStudios-Setup.${ext}",
+      "artifactName": "StormCodeEditor-Setup.${ext}",
       "target": [
         "deb",
         "AppImage"
