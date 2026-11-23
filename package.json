@@ -1,6 +1,6 @@
 {
   "name": "stormcodeeditor-ide",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "StormGamesStudios <meliodas.aitor@gmail.com>",
   "description": "A minimal Electron-based code editor built with Monaco",
   "main": "main.js",
@@ -20,7 +20,7 @@
     "rebuild:node-pty": "npm.cmd exec electron-rebuild -- --force --only node-pty"
   },
   "devDependencies": {
-    "electron": "^45.3.4",
+    "electron": "^45.4.1",
     "electron-builder": "^26.18.0",
     "electron-rebuild": "^3.2.9"
   },
